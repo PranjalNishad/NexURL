@@ -1,26 +1,27 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
-import { nanoid } from "nanoid";
-import connectDB from "./config/mongo.config";
-import urlSchema from "./models/shorturl.model";
-import dotenv from "dotenv";
-dotenv.config();
+import connectDB from "@/config/mongo.config";
+import urlSchema from "@/models/shorturl.model";
+import short_url from "@/routes/short_url.route";
+// import dotenv from "dotenv";
+// dotenv.config();
 
 const app = new Hono();
 
 connectDB();
 
-app.post("/api/create", async (c) => {
-  const { url } = await c.req.json();
-  const shortUrl = nanoid(7);
+app.route("/api/create", short_url);
 
-  const newUrl = new urlSchema({
-    full_url: url,
-    short_url: shortUrl,
-  });
+app.get("/:id", async (c) => {
+  const { id } = c.req.param();
+  const urlData = await urlSchema.findOne({ short_url: id });
+  
+  if (urlData){
+    return c.redirect(urlData.full_url);   
+  } else {
+    return c.json({ error: "URL not found" }, 404);
+  }
 
-  await newUrl.save();
-  return c.json({ short_url: shortUrl });
 });
 
 serve({
