@@ -2,20 +2,25 @@ import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { nanoid } from "nanoid";
 import connectDB from "./config/mongo.config";
+import urlSchema from "./models/shorturl.model";
 import dotenv from "dotenv";
-dotenv.config()
+dotenv.config();
 
 const app = new Hono();
 
 connectDB();
 
 app.post("/api/create", async (c) => {
-  // Parse JSON body
-  const {url} = await c.req.json();
+  const { url } = await c.req.json();
+  const shortUrl = nanoid(7);
 
-  console.log(url);
+  const newUrl = new urlSchema({
+    full_url: url,
+    short_url: shortUrl,
+  });
 
-  return c.text(nanoid(7));
+  await newUrl.save();
+  return c.json({ short_url: shortUrl });
 });
 
 serve({
@@ -25,5 +30,5 @@ serve({
 
 console.log("Server is running on http://localhost:3000");
 
-// get - redirection 
-// post - create short url 
+// get - redirection
+// post - create short url
