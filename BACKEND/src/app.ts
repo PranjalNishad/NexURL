@@ -1,8 +1,11 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import connectDB from "@/config/mongo.config";
+import { getShortUrl } from "@/dao/short_url.dao";
 import urlSchema from "@/models/shorturl.model";
 import short_url from "@/routes/short_url.route";
+import { redirectFromShortUrl } from "@/controller/short_url.controller";
+import { errorHandler } from "./utils/errorHandler";
 // import dotenv from "dotenv";
 // dotenv.config();
 
@@ -12,17 +15,9 @@ connectDB();
 
 app.route("/api/create", short_url);
 
-app.get("/:id", async (c) => {
-  const { id } = c.req.param();
-  const urlData = await urlSchema.findOne({ short_url: id });
-  
-  if (urlData){
-    return c.redirect(urlData.full_url);   
-  } else {
-    return c.json({ error: "URL not found" }, 404);
-  }
+app.get("/:id", redirectFromShortUrl);
 
-});
+app.onError(errorHandler);
 
 serve({
   fetch: app.fetch,

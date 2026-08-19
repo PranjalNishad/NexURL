@@ -1,14 +1,28 @@
 import type { Context } from "hono";
-import { createShortUrlWithUserId, createShortUrlWithoutUserId } from "@/services/short_url.service";
+import { createShortUrlWithoutUser } from "@/services/short_url.service";
+import { getShortUrl } from "@/dao/short_url.dao";
+import wrapAsync from "@/utils/tryCatchWrapper";
 
-export const createShortUrl = async (c: Context) => {
-  const { url, userId } = await c.req.json();
-  let shortUrl;
-  if (userId) {
-    shortUrl = await createShortUrlWithUserId(url, userId);
-  } else {
-    shortUrl = await createShortUrlWithoutUserId(url);
-  }
+export const createShortUrl = wrapAsync(async (c: Context) => {
+  const { url } = await c.req.json();
+
+  const shortUrl = await createShortUrlWithoutUser(url);
 
   return c.text(process.env.APP_URL + shortUrl);
-};
+});
+
+export const redirectFromShortUrl = wrapAsync(async (c: Context) => {
+  const { id } = c.req.param();
+  const url = await getShortUrl(id);
+  if (!url) {
+    return c.json(
+      {
+        success: false,
+        message: "Short URL not found",
+      },
+      404,
+    );
+  }
+
+  return c.redirect(url.full_url);
+});

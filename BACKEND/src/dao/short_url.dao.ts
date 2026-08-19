@@ -16,3 +16,13 @@ export const saveShortUrl = async (
   }
   await newUrl.save();
 };
+
+// displaying url click count
+
+export const getShortUrl = async (shortUrl: string) => {
+  return await urlSchema.findOneAndUpdate(
+    { short_url: shortUrl },
+    { $inc: { clicks: 1 } },
+    {new: true}
+  );
+};
