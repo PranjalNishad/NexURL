@@ -1,0 +1,275 @@
+---
+interface Props {
+  /** Which nav item is currently active. */
+  active?: "dashboard" | "links" | "analytics" | "settings";
+}
+
+const { active = "dashboard" } = Astro.props;
+
+const navItems = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    href: "/dashboard",
+    icon: '<rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />',
+  },
+  {
+    id: "links",
+    label: "Links",
+    href: "/dashboard#recent-links",
+    icon: '<path d="M9.5 14.5 14.5 9.5" /><path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" /><path d="M16 11.5l2.5-2.5a3 3 0 0 0-4.2-4.2L12 7.3" />',
+  },
+  {
+    id: "analytics",
+    label: "Analytics",
+    href: "/analytics",
+    icon: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />',
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    href: "/settings",
+    icon: '<path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" />',
+  },
+];
+
+const activeIconClass: Record<string, string> = {
+  dashboard: "text-[var(--color-primary)]",
+  links: "text-[var(--color-secondary)]",
+  analytics: "text-[var(--color-accent)]",
+  settings: "text-[var(--color-text-primary)]",
+};
+
+function linkClasses(itemId: string, isMobile = false) {
+  const isActive = itemId === active;
+  const base = [
+    "relative",
+    "flex",
+    "items-center",
+    "gap-3",
+    "rounded-lg",
+    "text-sm",
+    "font-medium",
+    "transition-colors",
+    "duration-200",
+    "focus-visible:outline-none",
+    "focus-visible:ring-2",
+    "focus-visible:ring-[var(--color-border-active)]",
+    isMobile ? "px-3 py-2.5" : "px-3 py-2",
+    isActive
+      ? "bg-[var(--color-surface-hover)] text-[var(--color-text-primary)]"
+      : "text-[var(--color-text-muted)] hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)]",
+  ];
+  return base.join(" ");
+}
+---
+
+<!-- Desktop sidebar -->
+<aside class="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-[var(--color-border-soft)] bg-[var(--color-background-soft)] lg:flex">
+  <!-- Brand -->
+  <a href="/" class="flex h-16 shrink-0 items-center gap-2 border-b border-[var(--color-border-soft)] px-6 text-[var(--color-text-primary)]" aria-label="NexURL home">
+    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">N</span>
+    <span class="text-base font-semibold tracking-tight">
+      <span class="font-light">Nex</span>
+      <span class="gradient-text font-semibold">URL</span>
+    </span>
+  </a>
+
+  <!-- Navigation -->
+  <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Sidebar">
+    <ul class="flex list-none flex-col gap-1 p-0">
+      {
+        navItems.map((item) => (
+          <li class="p-0">
+            <a
+              href={item.href}
+              class={linkClasses(item.id)}
+              aria-current={item.id === active ? "page" : undefined}
+            >
+              {
+                item.id === active && (
+                  <span
+                    class="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[var(--gradient-primary)]"
+                    aria-hidden="true"
+                  />
+                )
+              }
+              <svg
+                viewBox="0 0 24 24"
+                class:list={["h-[18px] w-[18px] shrink-0", item.id === active ? activeIconClass[item.id] : "text-[var(--color-text-muted)]"]}
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                set:html={item.icon}
+              />
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <!-- Account section -->
+  <div class="shrink-0 border-t border-[var(--color-border-soft)] p-3">
+    <a href="/settings" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-[var(--glass-background-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]">
+      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)]" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.5" />
+          <path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
+        </svg>
+      </span>
+      <span class="min-w-0">
+        <span class="block text-sm font-medium text-[var(--color-text-primary)]">Account</span>
+        <span class="block truncate text-xs text-[var(--color-text-muted)]">Manage your profile</span>
+      </span>
+    </a>
+  </div>
+</aside>
+
+<!-- Mobile top bar -->
+<header class="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[var(--color-border-soft)] bg-[var(--color-background)]/80 px-4 backdrop-blur-xl lg:hidden">
+  <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="NexURL home">
+    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">N</span>
+    <span class="text-base font-semibold tracking-tight">
+      <span class="font-light">Nex</span>
+      <span class="gradient-text font-semibold">URL</span>
+    </span>
+  </a>
+
+  <button
+    type="button"
+    class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+    data-drawer-toggle
+    aria-expanded="false"
+    aria-controls="dashboard-drawer"
+    aria-label="Open menu"
+  >
+    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </svg>
+  </button>
+</header>
+
+<!-- Mobile drawer overlay -->
+<div class="fixed inset-0 z-40 hidden bg-[var(--color-background)]/60 backdrop-blur-sm lg:hidden" data-drawer-overlay />
+
+<!-- Mobile drawer -->
+<aside
+  id="dashboard-drawer"
+  class="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] -translate-x-full flex-col border-r border-[var(--color-border)] bg-[var(--color-background-soft)] transition-transform duration-300 ease-out lg:hidden"
+  data-drawer
+  aria-label="Mobile navigation"
+>
+  <div class="flex h-16 shrink-0 items-center justify-between border-b border-[var(--color-border-soft)] px-4">
+    <a href="/" class="flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="NexURL home">
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]" aria-hidden="true">N</span>
+      <span class="text-base font-semibold tracking-tight">
+        <span class="font-light">Nex</span>
+        <span class="gradient-text font-semibold">URL</span>
+      </span>
+    </a>
+
+    <button
+      type="button"
+      class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[var(--color-text-secondary)] transition-colors hover:bg-[var(--glass-background-hover)] hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+      data-drawer-close
+      aria-label="Close menu"
+    >
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+  </div>
+
+  <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Mobile sidebar">
+    <ul class="flex list-none flex-col gap-1 p-0">
+      {
+        navItems.map((item) => (
+          <li class="p-0">
+            <a
+              href={item.href}
+              class={linkClasses(item.id, true)}
+              aria-current={item.id === active ? "page" : undefined}
+            >
+              {
+                item.id === active && (
+                  <span
+                    class="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[var(--gradient-primary)]"
+                    aria-hidden="true"
+                  />
+                )
+              }
+              <svg
+                viewBox="0 0 24 24"
+                class:list={["h-[18px] w-[18px] shrink-0", item.id === active ? activeIconClass[item.id] : "text-[var(--color-text-muted)]"]}
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                set:html={item.icon}
+              />
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div class="shrink-0 border-t border-[var(--color-border-soft)] p-3">
+    <a href="/settings" class="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors duration-200 hover:bg-[var(--glass-background-hover)]">
+      <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-secondary)]" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.5" />
+          <path d="M5 20c1.5-3 4-4.5 7-4.5s5.5 1.5 7 4.5" />
+        </svg>
+      </span>
+      <span class="min-w-0">
+        <span class="block text-sm font-medium text-[var(--color-text-primary)]">Account</span>
+        <span class="block truncate text-xs text-[var(--color-text-muted)]">Manage your profile</span>
+      </span>
+    </a>
+  </div>
+</aside>
+
+<script>
+  const toggle = document.querySelector("[data-drawer-toggle]");
+  const drawer = document.querySelector("[data-drawer]");
+  const overlay = document.querySelector("[data-drawer-overlay]");
+  const closeButtons = document.querySelectorAll("[data-drawer-close]");
+
+  function openDrawer() {
+    drawer?.classList.remove("-translate-x-full");
+    toggle?.setAttribute("aria-expanded", "true");
+    overlay?.classList.remove("hidden");
+  }
+
+  function closeDrawer() {
+    drawer?.classList.add("-translate-x-full");
+    toggle?.setAttribute("aria-expanded", "false");
+    overlay?.classList.add("hidden");
+  }
+
+  toggle?.addEventListener("click", () => {
+    if (drawer?.classList.contains("-translate-x-full")) {
+      openDrawer();
+    } else {
+      closeDrawer();
+    }
+  });
+
+  overlay?.addEventListener("click", closeDrawer);
+  closeButtons.forEach((btn) => btn.addEventListener("click", closeDrawer));
+
+  drawer?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeDrawer));
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeDrawer();
+  });
+</script>

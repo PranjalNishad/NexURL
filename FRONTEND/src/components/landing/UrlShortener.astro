@@ -1,0 +1,178 @@
+---
+import Button from "@/components/common/Button.astro";
+import GlassCard from "@/components/common/GlassCard.astro";
+import Input from "@/components/common/Input.astro";
+---
+
+<section class="container-page px-4" id="shorten">
+  <GlassCard glow padding="lg" class="mx-auto max-w-2xl">
+    <div class="text-center">
+      <h2 class="m-0 text-xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-2xl">
+        Shorten your URL
+      </h2>
+      <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[var(--color-text-muted)]">
+        Paste a long URL and turn it into a clean, shareable link.
+      </p>
+    </div>
+
+    <!-- Shorten form -->
+    <form
+      id="shorten-form"
+      class="mt-7 flex flex-col gap-3 sm:flex-row sm:items-start"
+      novalidate
+    >
+      <div class="w-full flex-1">
+        <Input
+          type="url"
+          name="url"
+          id="shorten-url"
+          placeholder="https://example.com/your-long-url"
+          aria-label="Long URL to shorten"
+        />
+      </div>
+
+      <Button
+        type="submit"
+        variant="primary"
+        size="lg"
+        class="h-11 shrink-0 sm:mt-0"
+        id="shorten-submit"
+      >
+        Shorten URL
+      </Button>
+    </form>
+
+    <!-- Error message -->
+    <p
+      id="shorten-error"
+      class="mt-4 hidden text-center text-sm text-[var(--color-danger)]"
+      role="alert"
+    />
+
+    <!-- Result -->
+    <div
+      id="shorten-result"
+      class="mt-6 hidden flex-col items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:flex-row sm:justify-between sm:gap-4"
+    >
+      <div class="min-w-0 text-center sm:text-left">
+        <p class="m-0 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">
+          Your short link
+        </p>
+        <a
+          id="shorten-result-link"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-1 block truncate text-sm font-semibold text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-primary)]"
+        />
+      </div>
+
+      <Button
+        type="button"
+        variant="secondary"
+        size="sm"
+        class="shrink-0"
+        id="shorten-copy"
+      >
+        Copy
+      </Button>
+    </div>
+
+    <!-- Trust/status row -->
+    <ul class="mt-6 flex list-none flex-wrap items-center justify-center gap-x-6 gap-y-2 p-0">
+      <li class="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)]">
+        <svg viewBox="0 0 16 16" class="h-3.5 w-3.5 text-[var(--color-primary)]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 1.5 10 4l3 .5-2 2.2.5 3L8 8.4l-3.5 1.3.5-3-2-2.2L6 4z" />
+        </svg>
+        Fast
+      </li>
+      <li class="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)]">
+        <svg viewBox="0 0 16 16" class="h-3.5 w-3.5 text-[var(--color-secondary)]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M8 2.5 13 5v3.2c0 2.9-2 5-5 6.3-3-1.3-5-3.4-5-6.3V5z" />
+          <path d="m6.2 8 1.2 1.2L10 6.7" />
+        </svg>
+        Secure
+      </li>
+      <li class="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)]">
+        <svg viewBox="0 0 16 16" class="h-3.5 w-3.5 text-[var(--color-accent)]" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 13V8M8 13V3M13 13v-3" />
+        </svg>
+        Analytics
+      </li>
+    </ul>
+  </GlassCard>
+</section>
+
+<script>
+  import { createShortUrl } from "@/api/shortUrl.api";
+
+  const form = document.getElementById("shorten-form") as HTMLFormElement | null;
+  const urlInput = document.getElementById("shorten-url") as HTMLInputElement | null;
+  const submitButton = document.getElementById("shorten-submit") as HTMLButtonElement | null;
+  const errorEl = document.getElementById("shorten-error") as HTMLParagraphElement | null;
+  const resultEl = document.getElementById("shorten-result") as HTMLDivElement | null;
+  const resultLink = document.getElementById("shorten-result-link") as HTMLAnchorElement | null;
+  const copyButton = document.getElementById("shorten-copy") as HTMLButtonElement | null;
+
+  let shortUrl = "";
+
+  function setError(message: string) {
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.remove("hidden");
+    }
+  }
+
+  function clearError() {
+    errorEl?.classList.add("hidden");
+  }
+
+  function setLoading(isLoading: boolean) {
+    if (submitButton) submitButton.disabled = isLoading;
+    if (copyButton) copyButton.disabled = isLoading;
+  }
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearError();
+    resultEl?.classList.add("hidden");
+
+    const url = urlInput?.value.trim() ?? "";
+
+    if (!url) {
+      setError("Please enter a URL to shorten.");
+      urlInput?.focus();
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      shortUrl = await createShortUrl(url);
+      if (resultLink) {
+        resultLink.href = shortUrl;
+        resultLink.textContent = shortUrl;
+      }
+      resultEl?.classList.remove("hidden");
+      resultEl?.classList.add("flex");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  copyButton?.addEventListener("click", async () => {
+    if (!shortUrl) return;
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+      copyButton.textContent = "Copied!";
+      window.setTimeout(() => {
+        copyButton.textContent = "Copy";
+      }, 2000);
+    } catch {
+      setError("Could not copy to clipboard. Please copy it manually.");
+    }
+  });
+</script>

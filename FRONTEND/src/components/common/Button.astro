@@ -1,0 +1,134 @@
+---
+interface Props {
+  /** Button style variant. */
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+  /** Visual size. */
+  size?: "sm" | "md" | "lg";
+  /** Native button type. */
+  type?: "button" | "submit" | "reset";
+  /** Disables interaction and dims the button. */
+  disabled?: boolean;
+  /** Shows an inline spinner and blocks interaction. */
+  loading?: boolean;
+  /** Makes the button stretch to the full width of its container. */
+  fullWidth?: boolean;
+  /** Extra classes merged onto the button element. */
+  class?: string;
+  /** The button's label. Use the slot for rich content. */
+  "aria-label"?: string;
+  /** Allows arbitrary native <button> attributes. */
+  [key: string]: unknown;
+}
+
+const {
+  variant = "primary",
+  size = "md",
+  type = "button",
+  disabled = false,
+  loading = false,
+  fullWidth = false,
+  class: className = "",
+  ...attrs
+} = Astro.props;
+
+const variantClasses: Record<string, string> = {
+  primary: [
+    "text-[#0b0b10]",
+    "bg-[var(--gradient-primary)]",
+    "shadow-[0_2px_20px_rgba(255,138,101,0.15)]",
+    "hover:shadow-[0_6px_28px_rgba(255,138,101,0.28)]",
+    "hover:brightness-105",
+  ].join(" "),
+  secondary: [
+    "text-[var(--color-text-primary)]",
+    "bg-[var(--glass-background)]",
+    "border border-[var(--glass-border)]",
+    "backdrop-blur-[var(--glass-blur)]",
+    "hover:bg-[var(--glass-background-hover)]",
+    "hover:border-[var(--glass-border-hover)]",
+    "shadow-[var(--shadow-sm)]",
+  ].join(" "),
+  ghost: [
+    "text-[var(--color-text-secondary)]",
+    "hover:bg-[var(--glass-background)]",
+    "hover:text-[var(--color-text-primary)]",
+  ].join(" "),
+  danger: [
+    "text-[var(--color-danger)]",
+    "bg-[rgba(248,113,113,0.08)]",
+    "border border-[rgba(248,113,113,0.2)]",
+    "hover:bg-[rgba(248,113,113,0.14)]",
+    "hover:border-[rgba(248,113,113,0.4)]",
+  ].join(" "),
+};
+
+const sizeClasses: Record<string, string> = {
+  sm: "h-8 px-3 text-xs gap-1.5",
+  md: "h-10 px-4 text-sm gap-2",
+  lg: "h-12 px-6 text-base gap-2",
+};
+
+const baseClasses = [
+  "relative",
+  "inline-flex",
+  "items-center",
+  "justify-center",
+  "rounded-lg",
+  "font-medium",
+  "whitespace-nowrap",
+  "select-none",
+  "cursor-pointer",
+  "outline-none",
+  "transition-all",
+  "duration-200",
+  "ease-out",
+  "will-change-transform",
+  "disabled:cursor-not-allowed",
+  "disabled:opacity-50",
+  "disabled:pointer-events-none",
+  "disabled:shadow-none",
+  "focus-visible:ring-2",
+  "focus-visible:ring-[var(--color-border-active)]",
+  "focus-visible:ring-offset-2",
+  "focus-visible:ring-offset-[var(--color-background)]",
+  "active:scale-[0.98]",
+  "aria-busy:pointer-events-none",
+  "aria-busy:opacity-80",
+].join(" ");
+---
+
+<button
+  type={type}
+  disabled={disabled || loading}
+  aria-disabled={disabled || loading || undefined}
+  aria-busy={loading || undefined}
+  class:list={[baseClasses, variantClasses[variant], sizeClasses[size], fullWidth && "w-full", className]}
+  {...attrs}
+>
+  {
+    loading && (
+      <span class="shrink-0" aria-hidden="true">
+        <span class="btn-spinner" />
+      </span>
+    )
+  }
+  <slot />
+</button>
+
+<style>
+  .btn-spinner {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border-radius: 9999px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    animation: btn-spin 0.6s linear infinite;
+  }
+
+  @keyframes btn-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

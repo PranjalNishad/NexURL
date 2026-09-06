@@ -1,0 +1,64 @@
+---
+import Button from "@/components/common/Button.astro";
+import GlassCard from "@/components/common/GlassCard.astro";
+import Input from "@/components/common/Input.astro";
+---
+
+<GlassCard glow class="w-full">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
+        Create a short link
+      </h2>
+      <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+        Turn any long URL into a clean, shareable link.
+      </p>
+    </div>
+  </div>
+
+  <form
+    id="create-link-form"
+    class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-start"
+    novalidate
+  >
+    <div class="w-full flex-1">
+      <Input
+        type="url"
+        name="url"
+        id="create-link-url"
+        placeholder="https://example.com/your-long-url"
+        aria-label="Long URL to shorten"
+      />
+    </div>
+
+    <Button
+      type="submit"
+      variant="primary"
+      class="h-11 shrink-0 sm:mt-0"
+    >
+      Shorten URL
+    </Button>
+  </form>
+
+  <p
+    id="create-link-status"
+    class="m-0 mt-4 hidden text-center text-sm text-[var(--color-text-muted)]"
+    role="status"
+  >
+    Shortening isn&rsquo;t connected to a backend yet — nothing was submitted.
+  </p>
+</GlassCard>
+
+<script>
+  const form = document.getElementById("create-link-form");
+  const status = document.getElementById("create-link-status");
+
+  form?.addEventListener("submit", (event) => {
+    // No backend API contract yet — prevent navigation and inform the user.
+    event.preventDefault();
+    if (status) {
+      status.classList.remove("hidden");
+      window.setTimeout(() => status.classList.add("hidden"), 4000);
+    }
+  });
+</script>

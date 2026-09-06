@@ -1,0 +1,21 @@
+---
+import Button from "@/components/common/Button.astro";
+---
+
+<div class="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h1 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)]">
+      Dashboard
+    </h1>
+    <p class="mt-1 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+      Manage your short links and track their performance.
+    </p>
+  </div>
+
+  <Button variant="primary" type="button" data-scroll-to="create-link">
+    <svg viewBox="0 0 16 16" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+      <path d="M8 3v10M3 8h10" />
+    </svg>
+    Create Link
+  </Button>
+</div>

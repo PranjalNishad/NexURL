@@ -1,0 +1,59 @@
+---
+const steps = [
+  {
+    index: "01",
+    title: "Paste your URL",
+    description: "Drop in any long link you want to share.",
+  },
+  {
+    index: "02",
+    title: "Create your short link",
+    description: "Get a clean, branded link in an instant.",
+  },
+  {
+    index: "03",
+    title: "Share and track",
+    description: "Send it anywhere and watch the clicks roll in.",
+  },
+];
+---
+
+<section class="container-page px-4 py-20 md:py-24" id="how-it-works">
+  <div class="mx-auto max-w-2xl text-center">
+    <h2 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl md:text-4xl">
+      How it works
+    </h2>
+    <p class="mx-auto mt-3 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">
+      Three simple steps between you and a better link.
+    </p>
+  </div>
+
+  <div class="relative mt-12 grid gap-10 sm:grid-cols-3 sm:gap-6">
+    <!-- Connecting line (desktop only) -->
+    <div
+      class="absolute left-[16%] right-[16%] top-7 hidden h-px bg-[var(--gradient-primary)] opacity-20 sm:block"
+      aria-hidden="true"
+    />
+
+    {
+      steps.map((step) => (
+        <div class="relative flex flex-col items-center text-center">
+          <div
+            class="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-[var(--shadow-sm)]"
+          >
+            <span class="gradient-text font-mono text-sm font-semibold">
+              {step.index}
+            </span>
+          </div>
+
+          <h3 class="mt-5 m-0 text-base font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-lg">
+            {step.title}
+          </h3>
+          <p class="mx-auto mt-2 max-w-[16rem] text-sm leading-relaxed text-[var(--color-text-muted)]">
+            {step.description}
+          </p>
+        </div>
+      ))
+    }
+  </div>
+</section>

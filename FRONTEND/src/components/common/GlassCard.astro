@@ -1,0 +1,54 @@
+---
+interface Props {
+  /** Brightens the surface and border on hover. */
+  hover?: boolean;
+  /** Adds a subtle ambient glow around the card. */
+  glow?: boolean;
+  /** Inner padding scale. */
+  padding?: "none" | "sm" | "md" | "lg";
+  /** Extra classes merged onto the card element. */
+  class?: string;
+}
+
+const {
+  hover = false,
+  glow = false,
+  padding = "md",
+  class: className = "",
+} = Astro.props;
+
+const paddingClasses: Record<string, string> = {
+  none: "p-0",
+  sm: "p-4",
+  md: "p-6",
+  lg: "p-8",
+};
+---
+
+<div
+  class:list={[
+    // Glass surface — same tokens as the global .glass utility.
+    "bg-[var(--glass-background)]",
+    "border",
+    "border-[var(--glass-border)]",
+    "backdrop-blur-[var(--glass-blur)]",
+    // Modern rounded corners from the design system.
+    "rounded-[var(--radius-lg)]",
+    // Opt-in hover brightening (surface + border).
+    hover && [
+      "transition-colors",
+      "duration-300",
+      "ease-out",
+      "hover:bg-[var(--glass-background-hover)]",
+      "hover:border-[var(--glass-border-hover)]",
+    ],
+    // Opt-in ambient glow.
+    glow && "shadow-[var(--shadow-glow)]",
+    // Padding control.
+    paddingClasses[padding],
+    // Caller overrides come last.
+    className,
+  ]}
+>
+  <slot />
+</div>

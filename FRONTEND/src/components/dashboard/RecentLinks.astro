@@ -1,0 +1,146 @@
+---
+import LinkActions from "@/components/links/LinkActions.astro";
+
+/**
+ * Shape of a link row for the dashboard table.
+ * When the backend contract is defined, this should move to src/types/shortUrl.ts.
+ */
+interface LinkRow {
+  id: string;
+  destination: string;
+  shortUrl: string;
+  clicks: number;
+  createdAt: string;
+}
+
+interface Props {
+  /** Links to render. When omitted/empty, a friendly empty state is shown. */
+  links?: LinkRow[];
+}
+
+const { links = [] } = Astro.props;
+const hasLinks = links.length > 0;
+
+// Truncate long destination URLs in the middle for display.
+function truncateMiddle(url: string, max = 48): string {
+  if (url.length <= max) return url;
+  const head = url.slice(0, Math.floor(max / 2));
+  const tail = url.slice(-Math.floor(max / 3));
+  return `${head}…${tail}`;
+}
+---
+
+<section id="recent-links" class="scroll-mt-24">
+  <div class="mb-4 flex items-center justify-between">
+    <h2 class="m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
+      Recent Links
+    </h2>
+  </div>
+
+  {
+    !hasLinks && (
+      <div class="rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-6 py-14 text-center">
+        <!-- Subtle inline illustration -->
+        <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--gradient-primary-soft)]" aria-hidden="true">
+          <svg viewBox="0 0 24 24" class="h-6 w-6 text-[var(--color-primary)]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.5 14.5 14.5 9.5" />
+            <path d="M8 12.5 5.5 15a3 3 0 0 0 4.2 4.2L12 16.7" />
+            <path d="M16 11.5l2.5-2.5a3 3 0 0 0-4.2-4.2L12 7.3" />
+          </svg>
+        </div>
+
+        <h3 class="mt-5 m-0 text-base font-semibold text-[var(--color-text-primary)]">
+          No links yet
+        </h3>
+        <p class="mx-auto mt-1.5 max-w-xs text-sm leading-relaxed text-[var(--color-text-muted)]">
+          Create your first short link to see it here.
+        </p>
+
+        <a
+          href="#create-link"
+          class="mt-6 inline-flex h-10 items-center gap-2 rounded-lg bg-[var(--gradient-primary)] px-5 text-sm font-semibold text-[#0b0b10] shadow-[0_2px_20px_rgba(255,138,101,0.15)] transition-all duration-200 hover:brightness-105 hover:shadow-[0_6px_28px_rgba(255,138,101,0.28)] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+        >
+          <svg viewBox="0 0 16 16" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M8 3v10M3 8h10" />
+          </svg>
+          Create your first link
+        </a>
+      </div>
+    )
+  }
+
+  {
+    hasLinks && (
+      <div class="overflow-hidden rounded-xl border border-[var(--color-border-soft)] bg-[var(--color-surface)]">
+        <!-- Desktop table -->
+        <table class="hidden w-full border-collapse text-left md:table">
+          <thead>
+            <tr class="border-b border-[var(--color-border-soft)]">
+              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Destination URL</th>
+              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Short URL</th>
+              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Clicks</th>
+              <th class="px-5 py-3 text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Created</th>
+              <th class="px-5 py-3 text-right text-xs font-medium uppercase tracking-wide text-[var(--color-text-muted)]">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              links.map((link) => (
+                <tr class="border-b border-[var(--color-border-soft)] last:border-0 hover:bg-[var(--glass-background-hover)]/40">
+                  <td class="max-w-[16rem] px-5 py-4">
+                    <span class="block truncate text-sm text-[var(--color-text-secondary)]" title={link.destination}>
+                      {link.destination}
+                    </span>
+                  </td>
+                  <td class="px-5 py-4">
+                    <a href="#" class="text-sm font-medium text-[var(--color-text-primary)] transition-colors hover:text-[var(--color-primary)]">
+                      {link.shortUrl}
+                    </a>
+                  </td>
+                  <td class="px-5 py-4 font-mono text-sm text-[var(--color-text-secondary)]">
+                    {link.clicks}
+                  </td>
+                  <td class="px-5 py-4 text-sm text-[var(--color-text-muted)]">
+                    {link.createdAt}
+                  </td>
+                  <td class="px-5 py-4">
+                    <div class="flex justify-end">
+                      <LinkActions />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+
+        <!-- Mobile cards -->
+        <ul class="flex list-none flex-col divide-y divide-[var(--color-border-soft)] p-0 md:hidden">
+          {
+            links.map((link) => (
+              <li class="p-0">
+                <div class="flex flex-col gap-3 px-4 py-4">
+                  <div class="flex flex-col gap-0.5">
+                    <a href="#" class="text-sm font-medium text-[var(--color-text-primary)]">
+                      {link.shortUrl}
+                    </a>
+                    <span class="block truncate text-xs text-[var(--color-text-muted)]" title={link.destination}>
+                      {truncateMiddle(link.destination, 40)}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="text-xs text-[var(--color-text-muted)]">
+                      {link.clicks} clicks · {link.createdAt}
+                    </span>
+                    <LinkActions />
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    )
+  }
+</section>

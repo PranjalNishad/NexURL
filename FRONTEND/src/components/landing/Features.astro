@@ -1,0 +1,90 @@
+---
+import GlassCard from "@/components/common/GlassCard.astro";
+
+const features = [
+  {
+    index: "01",
+    id: "features",
+    title: "Lightning Fast",
+    description:
+      "Generate short links quickly with a lightweight and efficient system.",
+    icon: "bolt",
+    accent: "text-[var(--color-primary)]",
+    gradient: "bg-[var(--gradient-primary-soft)]",
+  },
+  {
+    index: "02",
+    id: "analytics",
+    title: "Smart Analytics",
+    description:
+      "Understand clicks and link performance with useful analytics.",
+    icon: "chart",
+    accent: "text-[var(--color-secondary)]",
+    gradient: "bg-[var(--gradient-primary-soft)]",
+  },
+  {
+    index: "03",
+    id: "",
+    title: "Simple Management",
+    description:
+      "Keep all your shortened links organized in one place.",
+    icon: "folder",
+    accent: "text-[var(--color-accent)]",
+    gradient: "bg-[var(--gradient-primary-soft)]",
+  },
+];
+
+const icons: Record<string, string> = {
+  bolt: '<path d="M9 2 4 9h4l-1 5 5-7h-4l1-5z" />',
+  chart: '<path d="M4 13v3M8 9v7M12 5v11M16 11v5" />',
+  folder: '<path d="M2.5 5.5h4l1.5-1.5h5.5a1 1 0 0 1 1 1v1h-12z" /><path d="M2.5 5.5V12a1.5 1.5 0 0 0 1.5 1.5h8a1.5 1.5 0 0 0 1.5-1.5V6.5" />',
+};
+---
+
+<section class="container-page px-4 py-20 md:py-28">
+  <div class="mx-auto max-w-2xl text-center">
+    <h2 class="m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl md:text-4xl">
+      Everything you need for better links.
+    </h2>
+    <p class="mx-auto mt-3 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">
+      Simple tools for creating, managing, and understanding every link you
+      share.
+    </p>
+  </div>
+
+  <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      features.map((feature) => (
+        <div id={feature.id || undefined} class={feature.id ? "scroll-mt-24" : ""}>
+          <GlassCard hover class="h-full">
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--gradient-primary-soft)]">
+                <svg
+                  viewBox="0 0 24 24"
+                  class:list={["h-5 w-5", feature.accent]}
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                  set:html={icons[feature.icon]}
+                />
+              </div>
+              <span class="font-mono text-sm font-medium text-[var(--color-text-subtle)]">
+                {feature.index}
+              </span>
+            </div>
+
+            <h3 class="mt-5 m-0 text-lg font-semibold tracking-tight text-[var(--color-text-primary)]">
+              {feature.title}
+            </h3>
+            <p class="mt-2 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+              {feature.description}
+            </p>
+          </GlassCard>
+        </div>
+      ))
+    }
+  </div>
+</section>

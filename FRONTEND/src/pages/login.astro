@@ -1,0 +1,21 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import LoginForm from "@/components/auth/LoginForm.astro";
+---
+
+<Layout
+  title="Sign in — NexURL"
+  description="Sign in to your NexURL account."
+>
+  <main class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
+    <!-- Ambient background glows -->
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="bg-glow bg-glow-primary -top-24 left-1/2 -translate-x-[80%]" />
+      <div class="bg-glow bg-glow-secondary -bottom-32 right-[-80px]" />
+    </div>
+
+    <div class="relative w-full max-w-md">
+      <LoginForm />
+    </div>
+  </main>
+</Layout>

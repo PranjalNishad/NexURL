@@ -1,0 +1,182 @@
+---
+interface Props {
+  /** Visible label above the input. */
+  label?: string;
+  /** Placeholder text inside the input. */
+  placeholder?: string;
+  /** Controlled or initial value. */
+  value?: string;
+  /** Form field name. */
+  name?: string;
+  /** Element id; also used to associate the label and messages. */
+  id?: string;
+  /** Native input type. Defaults to "text". */
+  type?: "text" | "url" | "email" | "password" | "number" | "search" | "tel";
+  /** Marks the field as required. */
+  required?: boolean;
+  /** Disables the input. */
+  disabled?: boolean;
+  /** Makes the field read-only. */
+  readonly?: boolean;
+  /** Error message; renders in red below and sets aria-invalid. */
+  error?: string;
+  /** Helper text shown below the input when there is no error. */
+  helper?: string;
+  /** Optional autoComplete value passed to the native input. */
+  autocomplete?: string;
+  /** Extra classes merged onto the input element. */
+  class?: string;
+  /** Optional icon/label rendered inside the left side of the field. */
+  [key: string]: unknown;
+}
+
+const {
+  label = "",
+  placeholder = "",
+  value = "",
+  name = "",
+  id = "",
+  type = "text",
+  required = false,
+  disabled = false,
+  readonly = false,
+  error = "",
+  helper = "",
+  autocomplete = "",
+  class: className = "",
+  ...attrs
+} = Astro.props;
+
+// Only render when an error exists; keeps DOM clean otherwise.
+const hasError = error.length > 0;
+
+// Only include the message id when there is actually a message.
+const describedBy = hasError
+  ? `${id}-error`
+  : helper.length > 0
+    ? `${id}-helper`
+    : undefined;
+
+// True when the caller passes an <span slot="icon">…</span>.
+const hasIcon = Astro.slots.has("icon");
+
+const inputClasses = [
+  // Base input styling from the design system.
+  "input-base",
+  // Spacing / sizing / typography.
+  "w-full",
+  "h-11",
+  "text-sm",
+  "text-[var(--color-text-primary)]",
+  "placeholder:text-[var(--color-text-subtle)]",
+  // Leave room for the leading icon when provided.
+  hasIcon ? "pl-10" : "px-4",
+  // Error overrides.
+  hasError ? "input-error" : "",
+  // Custom classes passed by the caller.
+  className,
+].join(" ");
+---
+
+<div class="w-full">
+  {
+    label && (
+      <label
+        for={id}
+        class:list={[
+          "mb-2",
+          "block",
+          "text-sm",
+          "font-medium",
+          "text-[var(--color-text-primary)]",
+          disabled && "opacity-50",
+        ]}
+      >
+        {label}
+        {required && <span class="text-[var(--color-primary)]"> *</span>}
+      </label>
+    )
+  }
+
+  <div class="relative">
+    {
+      hasIcon && (
+        <div
+          class:list={[
+            "pointer-events-none",
+            "absolute",
+            "inset-y-0",
+            "left-3.5",
+            "z-10",
+            "flex",
+            "items-center",
+            "text-[var(--color-text-muted)]",
+            hasError && "text-[var(--color-danger)]",
+          ]}
+          aria-hidden="true"
+        >
+          <slot name="icon" />
+        </div>
+      )
+    }
+
+    <input
+      type={type}
+      id={id || undefined}
+      name={name || undefined}
+      value={value || undefined}
+      placeholder={placeholder || undefined}
+      required={required || undefined}
+      disabled={disabled || undefined}
+      readonly={readonly || undefined}
+      autocomplete={autocomplete || undefined}
+      aria-invalid={hasError || undefined}
+      aria-describedby={describedBy}
+      class:list={inputClasses.split(" ")}
+    />
+  </div>
+
+  {
+    // Helper or error message below the field.
+    (helper || hasError) && (
+      <p
+        id={describedBy}
+        class:list={[
+          "mt-2",
+          "text-xs",
+          "leading-relaxed",
+          hasError
+            ? "text-[var(--color-danger)]"
+            : "text-[var(--color-text-muted)]",
+        ]}
+      >
+        {hasError ? error : helper}
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .input-base:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .input-base[readonly] {
+    opacity: 0.7;
+    cursor: default;
+  }
+
+  .input-error {
+    border-color: rgba(248, 113, 113, 0.5);
+  }
+
+  .input-error:hover {
+    border-color: rgba(248, 113, 113, 0.7);
+  }
+
+  .input-error:focus {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.08);
+  }
+</style>

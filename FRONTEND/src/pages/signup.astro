@@ -1,0 +1,21 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import RegisterForm from "@/components/auth/RegisterForm.astro";
+---
+
+<Layout
+  title="Create your account — NexURL"
+  description="Create your NexURL account and start shortening links."
+>
+  <main class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
+    <!-- Ambient background glows -->
+    <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div class="bg-glow bg-glow-secondary -top-24 left-1/2 -translate-x-[20%]" />
+      <div class="bg-glow bg-glow-accent -bottom-32 left-[-80px] opacity-[0.08]" />
+    </div>
+
+    <div class="relative w-full max-w-md">
+      <RegisterForm />
+    </div>
+  </main>
+</Layout>

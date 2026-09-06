@@ -1,11 +1,47 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Layout from "@/layouts/Layout.astro";
+import NavBar from "@/components/layout/NavBar.astro";
+import Footer from "@/components/layout/Footer.astro";
+import Hero from "@/components/landing/Hero.astro";
+import UrlShortener from "@/components/landing/UrlShortener.astro";
+import Features from "@/components/landing/Features.astro";
+import Architecture from "@/components/landing/Architecture.astro";
+import Button from "@/components/common/Button.astro";
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="NexURL — Short Links. Big Possibilities." description="Create short, powerful links with NexURL.">
+  <div class="flex min-h-screen flex-col">
+    <NavBar />
+
+    <main class="flex-1">
+      <Hero />
+      <UrlShortener />
+      <Features />
+      <Architecture />
+
+      <!-- Final CTA -->
+      <section class="relative overflow-hidden py-20 md:py-28">
+        <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div class="bg-glow bg-glow-secondary left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" />
+        </div>
+
+        <div class="container-page relative px-4 text-center">
+          <h2 class="mx-auto m-0 max-w-2xl text-2xl font-semibold tracking-tight text-[var(--color-text-primary)] sm:text-3xl md:text-4xl">
+            Ready to shorten the way you share?
+          </h2>
+          <p class="mx-auto mt-3 max-w-md text-base leading-relaxed text-[var(--color-text-muted)]">
+            Create your first short link with NexURL.
+          </p>
+
+          <div class="mt-8">
+            <Button variant="primary" size="lg">
+              <a href="/signup" class="no-underline">Get Started</a>
+            </Button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <Footer />
+  </div>
 </Layout>

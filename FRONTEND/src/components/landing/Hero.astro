@@ -1,0 +1,40 @@
+---
+import Button from "@/components/common/Button.astro";
+---
+
+<section class="relative overflow-hidden" id="hero">
+  <!-- Ambient glow orbs (subtle, non-animated) -->
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="bg-glow bg-glow-primary -top-32 left-1/2 -translate-x-[70%]" />
+    <div class="bg-glow bg-glow-secondary top-0 right-[-120px]" />
+    <div class="bg-glow bg-glow-accent top-24 left-[-140px] opacity-[0.08]" />
+  </div>
+
+  <div class="container-page relative flex flex-col items-center px-4 pb-16 pt-20 text-center sm:pt-24 md:pb-24 md:pt-32">
+    <h1
+      class="max-w-3xl text-[2.6rem] font-semibold leading-[1.08] tracking-tight text-[var(--color-text-primary)] sm:text-6xl md:text-7xl"
+    >
+      Short Links.
+      <br />
+      <span class="gradient-text">Big Possibilities.</span>
+    </h1>
+
+    <p
+      class="mt-6 max-w-xl text-base leading-relaxed text-[var(--color-text-secondary)] sm:text-lg"
+    >
+      Create, manage, and analyze powerful short links from one simple
+      dashboard.
+    </p>
+
+    <div
+      class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
+    >
+      <Button variant="primary" size="lg">
+        <a href="/signup" class="text-inherit no-underline">Start Shortening</a>
+      </Button>
+      <Button variant="secondary" size="lg">
+        <a href="#features" class="text-inherit no-underline">Explore Features</a>
+      </Button>
+    </div>
+  </div>
+</section>

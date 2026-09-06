@@ -1,0 +1,106 @@
+---
+import Button from "@/components/common/Button.astro";
+import GlassCard from "@/components/common/GlassCard.astro";
+import Input from "@/components/common/Input.astro";
+---
+
+<GlassCard glow padding="lg" class="w-full max-w-md">
+  <!-- Wordmark -->
+  <a href="/" class="inline-flex items-center gap-2 text-[var(--color-text-primary)]" aria-label="NexURL home">
+    <span
+      class="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--gradient-primary)] text-sm font-bold text-[#0b0b10]"
+      aria-hidden="true"
+    >
+      N
+    </span>
+    <span class="text-lg font-semibold tracking-tight">
+      <span class="font-light">Nex</span>
+      <span class="gradient-text font-semibold">URL</span>
+    </span>
+  </a>
+
+  <!-- Heading -->
+  <h1 class="mt-6 m-0 text-2xl font-semibold tracking-tight text-[var(--color-text-primary)]">
+    Welcome back
+  </h1>
+  <p class="mt-2 m-0 text-sm leading-relaxed text-[var(--color-text-muted)]">
+    Sign in to continue to NexURL.
+  </p>
+
+  <!-- Form -->
+  <form id="login-form" class="mt-8 flex flex-col gap-5" novalidate>
+    <div>
+      <Input
+        type="email"
+        label="Email"
+        name="email"
+        id="login-email"
+        placeholder="you@example.com"
+        autocomplete="email"
+        required
+      />
+    </div>
+
+    <div>
+      <div class="mb-2 flex items-center justify-between">
+        <label for="login-password" class="block text-sm font-medium text-[var(--color-text-primary)]">
+          Password
+        </label>
+        <a
+          href="#"
+          class="text-xs font-medium text-[var(--color-text-muted)] transition-colors duration-200 hover:text-[var(--color-text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+        >
+          Forgot password?
+        </a>
+      </div>
+      <input
+        type="password"
+        name="password"
+        id="login-password"
+        placeholder="••••••••••"
+        autocomplete="current-password"
+        required
+        class="input-base h-11 w-full text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-subtle)] px-4"
+      />
+    </div>
+
+    <Button type="submit" fullWidth size="lg" class="mt-1">
+      Sign In
+    </Button>
+
+    <p
+      id="login-status"
+      class="m-0 hidden text-center text-sm text-[var(--color-text-muted)]"
+      role="status"
+    >
+      Sign-in isn&rsquo;t connected to a backend yet — nothing was submitted.
+    </p>
+  </form>
+
+  <!-- Footer -->
+  <div class="mt-8 border-t border-[var(--color-border-soft)] pt-6 text-center">
+    <p class="m-0 text-sm text-[var(--color-text-muted)]">
+      Don&rsquo;t have an account?&nbsp;
+      <a
+        href="/signup"
+        class="font-medium text-[var(--color-text-primary)] transition-colors duration-200 hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-active)]"
+      >
+        Create account
+      </a>
+    </p>
+  </div>
+</GlassCard>
+
+<script>
+  const form = document.getElementById("login-form");
+  const status = document.getElementById("login-status");
+
+  form?.addEventListener("submit", (event) => {
+    // No backend API contract yet — prevent navigation and inform the user.
+    event.preventDefault();
+    if (status) {
+      status.classList.remove("hidden");
+      window.setTimeout(() => status.classList.add("hidden"), 4000);
+    }
+  });
+</script>
