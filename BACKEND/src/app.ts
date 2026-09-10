@@ -4,14 +4,18 @@ import connectDB from "@/config/mongo.config";
 import { getShortUrl } from "@/dao/short_url.dao";
 import urlSchema from "@/models/shorturl.model";
 import short_url from "@/routes/short_url.route";
+import auth_routes from "@/routes/auth.route";
 import { redirectFromShortUrl } from "@/controller/short_url.controller";
 import { errorHandler } from "./utils/errorHandler";
-// import dotenv from "dotenv";
-// dotenv.config();
+import { cors } from "hono/cors";
 
 const app = new Hono();
 
+app.use("*", cors());
+
 connectDB();
+
+app.route("/api/auth", auth_routes);
 
 app.route("/api/create", short_url);
 
