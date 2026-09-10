@@ -15,9 +15,9 @@ export const signToken = async (payload: any) => {
   );
 };
 
-export const verifyToken = (payload: any) => {
+export const verifyToken = (token: string) => {
   return jsonwebtoken.verify(
-    payload,
+    token,
     process.env.JWT_SECRET as string
   );
 };  

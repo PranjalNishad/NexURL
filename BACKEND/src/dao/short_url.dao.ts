@@ -26,3 +26,8 @@ export const getShortUrl = async (shortUrl: string) => {
     {new: true}
   );
 };
+
+export const getCustomShortUrl = async (slug: string) => {
+ const exists = await urlSchema.findOne({ short_url: slug });
+ return exists;
+};
